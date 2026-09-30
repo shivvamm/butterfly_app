@@ -1502,6 +1502,7 @@ MOD_NOREPEAT = 0x4000
 WM_HOTKEY = 0x0312
 HOTKEY_QUIT = 1
 HOTKEY_TOGGLE = 2
+HOTKEY_HIDE = 3
 
 user32 = ctypes.windll.user32
 
@@ -1544,6 +1545,7 @@ class ButterflyOverlay(QWidget):
         self._drag_prev = (0.0, 0.0)
         self._initial_fill_done = False
         self._interact_mode = False
+        self._hidden = False
 
         self.start_time = time.monotonic()
         self.physics_steps = 0
@@ -1568,6 +1570,7 @@ class ButterflyOverlay(QWidget):
         mods_quit = MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT
         user32.RegisterHotKey(None, HOTKEY_QUIT, mods_quit, 0x42)     # B
         user32.RegisterHotKey(None, HOTKEY_TOGGLE, mods_quit, 0x49)   # I
+        user32.RegisterHotKey(None, HOTKEY_HIDE, mods_quit, 0x48)     # H
 
         self._hotkey_timer = QTimer(self)
         self._hotkey_timer.timeout.connect(self._poll_hotkeys)
@@ -1583,10 +1586,24 @@ class ButterflyOverlay(QWidget):
                 return
             elif hk_id == HOTKEY_TOGGLE:
                 self._toggle_interact()
+            elif hk_id == HOTKEY_HIDE:
+                self._toggle_hide()
 
     def _toggle_interact(self):
         self._interact_mode = not self._interact_mode
         _set_click_through(self._hwnd, not self._interact_mode)
+
+    def _toggle_hide(self):
+        self._hidden = not self._hidden
+        if self._hidden:
+            self.anim_timer.stop()
+            self.spawn_timer.stop()
+            self.hide()
+        else:
+            self.show()
+            self.raise_()
+            self.spawn_timer.start()
+            self.anim_timer.start(int(1000 / FPS))
 
     def _spawn(self):
         elapsed = time.monotonic() - self.start_time
@@ -1617,6 +1634,7 @@ class ButterflyOverlay(QWidget):
             self._hotkey_timer.stop()
         user32.UnregisterHotKey(None, HOTKEY_QUIT)
         user32.UnregisterHotKey(None, HOTKEY_TOGGLE)
+        user32.UnregisterHotKey(None, HOTKEY_HIDE)
         self.close()
         QApplication.quit()
 
@@ -1722,6 +1740,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     print("Papillon (Windows) — Ctrl+Shift+B to close")
     print("Ctrl+Shift+I to toggle interaction mode")
+    print("Ctrl+Shift+H to hide/show")
     print("Rare species appear over time. Keep watching!")
     overlay = ButterflyOverlay()
     sys.exit(app.exec_())

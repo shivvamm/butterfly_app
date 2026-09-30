@@ -1511,6 +1511,7 @@ class ButterflyOverlay(QWidget):
         self._dragging = None
         self._drag_prev = (0.0, 0.0)
         self._initial_fill_done = False
+        self._hidden = False
 
         self.start_time = time.monotonic()
         self.physics_steps = 0
@@ -1581,11 +1582,18 @@ class ButterflyOverlay(QWidget):
                 self._hotkey_code = self.xdisplay.keysym_to_keycode(
                     XK.string_to_keysym("b")
                 )
+                self._hotkey_hide = self.xdisplay.keysym_to_keycode(
+                    XK.string_to_keysym("h")
+                )
                 mods = X.ControlMask | X.ShiftMask
                 for extra in (0, X.Mod2Mask, X.LockMask,
                               X.Mod2Mask | X.LockMask):
                     root.grab_key(
                         self._hotkey_code, mods | extra,
+                        True, X.GrabModeAsync, X.GrabModeAsync,
+                    )
+                    root.grab_key(
+                        self._hotkey_hide, mods | extra,
                         True, X.GrabModeAsync, X.GrabModeAsync,
                     )
 
@@ -1603,10 +1611,25 @@ class ButterflyOverlay(QWidget):
             while self.xdisplay.pending_events():
                 ev = self.xdisplay.next_event()
                 if ev.type == X.KeyPress:
-                    self._quit()
-                    return
+                    if ev.detail == self._hotkey_code:
+                        self._quit()
+                        return
+                    elif hasattr(self, '_hotkey_hide') and ev.detail == self._hotkey_hide:
+                        self._toggle_hide()
         except Exception:
             pass
+
+    def _toggle_hide(self):
+        self._hidden = not self._hidden
+        if self._hidden:
+            self.anim_timer.stop()
+            self.spawn_timer.stop()
+            self.hide()
+        else:
+            self.show()
+            self.raise_()
+            self.spawn_timer.start()
+            self.anim_timer.start(int(1000 / FPS))
 
     def _quit(self):
         self.anim_timer.stop()
@@ -1617,6 +1640,8 @@ class ButterflyOverlay(QWidget):
             from Xlib import X
             root = self.xdisplay.screen().root
             root.ungrab_key(self._hotkey_code, X.AnyModifier)
+            if hasattr(self, '_hotkey_hide'):
+                root.ungrab_key(self._hotkey_hide, X.AnyModifier)
             self.xdisplay.sync()
         except Exception:
             pass
@@ -1740,7 +1765,7 @@ class ButterflyOverlay(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    print("Papillon — press Ctrl+Shift+B to close")
+    print("Papillon — press Ctrl+Shift+B to close, Ctrl+Shift+H to hide/show")
     print("Rare species appear over time. Keep watching!")
     overlay = ButterflyOverlay()
     sys.exit(app.exec_())

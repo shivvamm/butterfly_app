@@ -1517,6 +1517,8 @@ class ButterflyOverlay(QWidget):
         self._drag_prev = (0.0, 0.0)
         self._initial_fill_done = False
         self._quit_requested = False
+        self._hide_requested = False
+        self._hidden = False
 
         self.start_time = time.monotonic()
         self.physics_steps = 0
@@ -1547,6 +1549,8 @@ class ButterflyOverlay(QWidget):
                     shift = flags & Quartz.kCGEventFlagMaskShift
                     if ctrl and shift and keycode == 11:  # 'b' key
                         self._quit_requested = True
+                    elif ctrl and shift and keycode == 4:  # 'h' key
+                        self._hide_requested = True
                     return event
 
                 mask = Quartz.CGEventMaskBit(Quartz.kCGEventKeyDown)
@@ -1601,6 +1605,18 @@ class ButterflyOverlay(QWidget):
         self.spawn_timer.stop()
         self.close()
         QApplication.quit()
+
+    def _toggle_hide(self):
+        self._hidden = not self._hidden
+        if self._hidden:
+            self.anim_timer.stop()
+            self.spawn_timer.stop()
+            self.hide()
+        else:
+            self.show()
+            self.raise_()
+            self.spawn_timer.start()
+            self.anim_timer.start(int(1000 / FPS))
 
     def _update_input_region(self):
         if self._dragging:
@@ -1662,6 +1678,10 @@ class ButterflyOverlay(QWidget):
         if self._quit_requested:
             self._quit()
             return
+        if self._hide_requested:
+            self._hide_requested = False
+            self._toggle_hide()
+            return
 
         cursor = QCursor.pos()
         self.mouse_x = cursor.x()
@@ -1705,7 +1725,7 @@ class ButterflyOverlay(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    print("Papillon (macOS) — press Ctrl+Shift+B to close")
+    print("Papillon (macOS) — press Ctrl+Shift+B to close, Ctrl+Shift+H to hide/show")
     print("Rare species appear over time. Keep watching!")
     overlay = ButterflyOverlay()
     sys.exit(app.exec_())
