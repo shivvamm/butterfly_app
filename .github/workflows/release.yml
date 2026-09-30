@@ -30,14 +30,14 @@ jobs:
       - name: Build Linux binary
         run: |
           pyinstaller --onefile --noconsole \
-            --name Papillon \
+            --name Papillon-Linux \
             --hidden-import PyQt5.sip \
             papillon.py
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/Papillon
+          files: dist/Papillon-Linux
 
   build-windows:
     runs-on: windows-latest
@@ -56,11 +56,11 @@ jobs:
       - name: Build Windows exe
         run: |
           pyinstaller --onefile --noconsole `
-            --name Papillon `
+            --name Papillon-Windows `
             --hidden-import PyQt5.sip `
-            papillon.py
+            papillon_win.py
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/Papillon.exe
+          files: dist/Papillon-Windows.exe
