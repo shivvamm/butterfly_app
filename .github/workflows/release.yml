@@ -64,3 +64,29 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist/Papillon-Windows.exe
+
+  build-macos:
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: |
+          pip install pyqt5 numpy pyinstaller pyobjc-framework-Quartz
+
+      - name: Build macOS app
+        run: |
+          pyinstaller --onefile --noconsole \
+            --name Papillon-macOS \
+            --hidden-import PyQt5.sip \
+            papillon_mac.py
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/Papillon-macOS
