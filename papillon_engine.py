@@ -60,6 +60,8 @@ NET_REPEL_STRENGTH = 3.5
 
 RARITY_COLORS = {0: "#aaaaaa", 1: "#4488cc", 2: "#cc44cc", 3: "#ffaa00"}
 
+COLLECTION_ENABLED = False
+
 
 def load_collection():
     try:

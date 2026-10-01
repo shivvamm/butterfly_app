@@ -192,33 +192,35 @@ class ButterflyOverlay(QWidget):
     def mousePressEvent(self, event):
         if not self._interact_mode:
             return
-        if event.button() == Qt.RightButton and self._net_active:
-            self._net_active = False
-            return
+        if COLLECTION_ENABLED:
+            if event.button() == Qt.RightButton and self._net_active:
+                self._net_active = False
+                return
         if event.button() != Qt.LeftButton:
             return
         x, y = event.x(), event.y()
 
-        if self._net_icon_rect.contains(QPointF(x, y)):
-            self._net_active = not self._net_active
-            if self._net_active:
-                self._panel_open = False
-            return
-        if self._badge_rect.contains(QPointF(x, y)):
-            self._panel_open = not self._panel_open
+        if COLLECTION_ENABLED:
+            if self._net_icon_rect.contains(QPointF(x, y)):
+                self._net_active = not self._net_active
+                if self._net_active:
+                    self._panel_open = False
+                return
+            if self._badge_rect.contains(QPointF(x, y)):
+                self._panel_open = not self._panel_open
+                if self._panel_open:
+                    self._net_active = False
+                return
             if self._panel_open:
-                self._net_active = False
-            return
-        if self._panel_open:
-            if not self._panel_rect.contains(QPointF(x, y)):
-                self._panel_open = False
-            return
+                if not self._panel_rect.contains(QPointF(x, y)):
+                    self._panel_open = False
+                return
 
-        if self._net_active:
-            b = self._hit_butterfly(x, y)
-            if b and b.interaction != "caught":
-                self._catch_butterfly(b)
-            return
+            if self._net_active:
+                b = self._hit_butterfly(x, y)
+                if b and b.interaction != "caught":
+                    self._catch_butterfly(b)
+                return
 
         b = self._hit_butterfly(x, y)
         if b:
@@ -284,17 +286,18 @@ class ButterflyOverlay(QWidget):
         for b in self.butterflies:
             draw_butterfly(painter, b)
 
-        caught_count = len([s for s in SPECIES
-                           if self._collection.get(s["name"], 0) > 0])
-        draw_net_icon(painter, self._net_icon_rect, self._net_active)
-        draw_badge(painter, self._badge_rect, caught_count)
+        if COLLECTION_ENABLED:
+            caught_count = len([s for s in SPECIES
+                               if self._collection.get(s["name"], 0) > 0])
+            draw_net_icon(painter, self._net_icon_rect, self._net_active)
+            draw_badge(painter, self._badge_rect, caught_count)
 
-        if self._panel_open:
-            draw_collection_panel(painter, self._panel_rect,
-                                  self._collection, SPECIES)
+            if self._panel_open:
+                draw_collection_panel(painter, self._panel_rect,
+                                      self._collection, SPECIES)
 
-        if self._net_active:
-            draw_net_cursor(painter, self.mouse_x, self.mouse_y)
+            if self._net_active:
+                draw_net_cursor(painter, self.mouse_x, self.mouse_y)
 
         if self._interact_mode:
             painter.setOpacity(0.6)
