@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 280" width="700" height="280">
+  <rect width="700" height="280" rx="12" fill="#f8faf5" stroke="#d8e4d0" stroke-width="1"/>
+
+  <!-- Header -->
+  <text x="350" y="35" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#2c5530" letter-spacing="3">KEYBOARD CONTROLS</text>
+  <line x1="50" y1="48" x2="650" y2="48" stroke="#d8e4d0" stroke-width="1"/>
+
+  <!-- Column headers -->
+  <text x="110" y="78" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#666">Shortcut</text>
+  <text x="300" y="78" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#666">Action</text>
+  <text x="520" y="78" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#666">Platform</text>
+
+  <!-- Row 1: Quit -->
+  <rect x="30" y="92" width="160" height="30" rx="6" fill="#2c5530" opacity="0.08"/>
+  <text x="110" y="112" text-anchor="middle" font-family="monospace" font-size="13" font-weight="bold" fill="#2c5530">Ctrl+Shift+B</text>
+  <text x="300" y="112" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#333">Quit Papillon</text>
+  <text x="520" y="112" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#888">All platforms</text>
+
+  <!-- Row 2: Hide -->
+  <rect x="30" y="132" width="160" height="30" rx="6" fill="#2c5530" opacity="0.08"/>
+  <text x="110" y="152" text-anchor="middle" font-family="monospace" font-size="13" font-weight="bold" fill="#2c5530">Ctrl+Shift+H</text>
+  <text x="300" y="152" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#333">Hide / Show overlay</text>
+  <text x="520" y="152" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#888">All platforms</text>
+
+  <!-- Row 3: Interact -->
+  <rect x="30" y="172" width="160" height="30" rx="6" fill="#4488cc" opacity="0.08"/>
+  <text x="110" y="192" text-anchor="middle" font-family="monospace" font-size="13" font-weight="bold" fill="#4488cc">Ctrl+Shift+I</text>
+  <text x="300" y="192" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#333">Toggle interact mode</text>
+  <text x="520" y="192" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#4488cc">Windows only</text>
+
+  <!-- Row 4: Escape -->
+  <rect x="30" y="212" width="160" height="30" rx="6" fill="#2c5530" opacity="0.08"/>
+  <text x="110" y="232" text-anchor="middle" font-family="monospace" font-size="13" font-weight="bold" fill="#2c5530">Escape</text>
+  <text x="300" y="232" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#333">Quit (when focused)</text>
+  <text x="520" y="232" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#888">All platforms</text>
+
+  <!-- Footer note -->
+  <line x1="50" y1="252" x2="650" y2="252" stroke="#d8e4d0" stroke-width="1"/>
+  <text x="350" y="272" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#999">Hotkeys work globally — no need to focus the overlay window</text>
+</svg>

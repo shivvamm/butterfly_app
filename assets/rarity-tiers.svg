@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 100" width="720" height="100">
+  <rect width="720" height="100" rx="10" fill="#f8faf5" stroke="#d8e4d0" stroke-width="1"/>
+
+  <!-- Common -->
+  <circle cx="100" cy="35" r="14" fill="#aaaaaa" opacity="0.25"/>
+  <text x="100" y="39" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#888888">4</text>
+  <text x="100" y="62" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#888888">Common</text>
+  <text x="100" y="78" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#aaaaaa">Available from start</text>
+
+  <!-- Uncommon -->
+  <circle cx="280" cy="35" r="14" fill="#4488cc" opacity="0.25"/>
+  <text x="280" y="39" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#4488cc">4</text>
+  <text x="280" y="62" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#4488cc">Uncommon</text>
+  <text x="280" y="78" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6699cc">Unlocks after 15 sec</text>
+
+  <!-- Rare -->
+  <circle cx="460" cy="35" r="14" fill="#cc44cc" opacity="0.25"/>
+  <text x="460" y="39" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#cc44cc">4</text>
+  <text x="460" y="62" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#cc44cc">Rare</text>
+  <text x="460" y="78" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#cc66cc">Unlocks after 30 sec</text>
+
+  <!-- Ultra-Rare -->
+  <circle cx="640" cy="35" r="14" fill="#ffaa00" opacity="0.25"/>
+  <text x="640" y="39" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#ffaa00">4</text>
+  <text x="640" y="62" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#dd9900">Ultra-Rare</text>
+  <text x="640" y="78" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#ccaa44">Unlocks after 3 min</text>
+</svg>
