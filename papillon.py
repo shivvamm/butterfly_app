@@ -10,6 +10,8 @@ import math
 import random
 import time
 import platform
+import json
+import os
 
 from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtCore import Qt, QTimer, QPointF, QRectF
@@ -23,6 +25,7 @@ from PyQt5.QtGui import (
     QCursor,
     QLinearGradient,
     QRadialGradient,
+    QFont,
 )
 import numpy as np
 
@@ -48,6 +51,25 @@ GLIDE_SINK = 0.12
 
 RARITY_UNLOCK = {0: 0, 1: 15, 2: 30, 3: 180}
 RARITY_WEIGHT = {0: 10, 1: 5, 2: 2, 3: 1}
+
+COLLECTION_FILE = os.path.expanduser("~/.papillon_collection.json")
+NET_REPEL_RADIUS = 220
+NET_REPEL_STRENGTH = 3.5
+
+RARITY_COLORS = {0: "#aaaaaa", 1: "#4488cc", 2: "#cc44cc", 3: "#ffaa00"}
+
+
+def load_collection():
+    try:
+        with open(COLLECTION_FILE) as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+def save_collection(coll):
+    with open(COLLECTION_FILE, 'w') as f:
+        json.dump(coll, f, indent=2)
 
 
 # ── Wing path helper ──────────────────────────────────
@@ -739,85 +761,85 @@ ANTENNA_FEATHER = np.array([
 
 SPECIES = [
     # Common (rarity 0)
-    {"name": "cabbage_white", "rarity": 0, "size": (14, 20),
+    {"name": "cabbage_white", "rarity": 0, "size": (14, 20), "color": "#f5f2e0",
      "fw": _fw_round, "hw": _hw_round,
      "paint": _paint_cabbage_white, "antenna": ANTENNA_CLUB,
      "spec": 0.08, "wing_alpha": 1.0, "body_scale": 0.85},
 
-    {"name": "painted_lady", "rarity": 0, "size": (15, 21),
+    {"name": "painted_lady", "rarity": 0, "size": (15, 21), "color": "#d4793c",
      "fw": _fw_nymphalid, "hw": _hw_nymphalid,
      "paint": _paint_painted_lady, "antenna": ANTENNA_CLUB,
      "spec": 0.10, "wing_alpha": 1.0, "body_scale": 1.0},
 
-    {"name": "monarch", "rarity": 0, "size": (18, 25),
+    {"name": "monarch", "rarity": 0, "size": (18, 25), "color": "#e18a32",
      "fw": _fw_nymphalid, "hw": _hw_nymphalid,
      "paint": _paint_monarch, "antenna": ANTENNA_CLUB,
      "spec": 0.10, "wing_alpha": 1.0, "body_scale": 1.0},
 
-    {"name": "common_blue", "rarity": 0, "size": (12, 17),
+    {"name": "common_blue", "rarity": 0, "size": (12, 17), "color": "#5b8ec9",
      "fw": _fw_round, "hw": _hw_round,
      "paint": _paint_common_blue, "antenna": ANTENNA_CLUB,
      "spec": 0.12, "wing_alpha": 1.0, "body_scale": 0.75},
 
     # Uncommon (rarity 1)
-    {"name": "red_admiral", "rarity": 1, "size": (16, 22),
+    {"name": "red_admiral", "rarity": 1, "size": (16, 22), "color": "#d83018",
      "fw": _fw_nymphalid, "hw": _hw_nymphalid,
      "paint": _paint_red_admiral, "antenna": ANTENNA_CLUB,
      "spec": 0.10, "wing_alpha": 1.0, "body_scale": 1.0},
 
-    {"name": "tiger_swallowtail", "rarity": 1, "size": (20, 27),
+    {"name": "tiger_swallowtail", "rarity": 1, "size": (20, 27), "color": "#f0d44c",
      "fw": _fw_swallowtail, "hw": lambda s: _hw_swallowtail(s, tail=0.5),
      "paint": _paint_tiger_swallowtail, "antenna": ANTENNA_CLUB,
      "spec": 0.10, "wing_alpha": 1.0, "body_scale": 1.1},
 
-    {"name": "fritillary", "rarity": 1, "size": (15, 21),
+    {"name": "fritillary", "rarity": 1, "size": (15, 21), "color": "#d4853a",
      "fw": _fw_nymphalid, "hw": _hw_nymphalid,
      "paint": _paint_fritillary, "antenna": ANTENNA_CLUB,
      "spec": 0.10, "wing_alpha": 1.0, "body_scale": 0.95},
 
-    {"name": "peacock", "rarity": 1, "size": (17, 23),
+    {"name": "peacock", "rarity": 1, "size": (17, 23), "color": "#a83020",
      "fw": _fw_angular, "hw": _hw_angular,
      "paint": _paint_peacock, "antenna": ANTENNA_CLUB,
      "spec": 0.12, "wing_alpha": 1.0, "body_scale": 1.0},
 
     # Rare (rarity 2)
-    {"name": "morpho", "rarity": 2, "size": (21, 27),
+    {"name": "morpho", "rarity": 2, "size": (21, 27), "color": "#1890d0",
      "fw": _fw_broad, "hw": _hw_broad,
      "paint": _paint_morpho, "antenna": ANTENNA_CLUB,
      "spec": 0.40, "wing_alpha": 1.0, "body_scale": 0.9},
 
-    {"name": "malachite", "rarity": 2, "size": (18, 24),
+    {"name": "malachite", "rarity": 2, "size": (18, 24), "color": "#90d8a0",
      "fw": _fw_angular, "hw": _hw_angular,
      "paint": _paint_malachite, "antenna": ANTENNA_CLUB,
      "spec": 0.12, "wing_alpha": 1.0, "body_scale": 1.0},
 
-    {"name": "glasswing", "rarity": 2, "size": (13, 18),
+    {"name": "glasswing", "rarity": 2, "size": (13, 18), "color": "#c8d0d4",
      "fw": _fw_narrow, "hw": _hw_narrow,
      "paint": _paint_glasswing, "antenna": ANTENNA_CLUB,
      "spec": 0.05, "wing_alpha": 0.50, "body_scale": 0.7},
 
-    {"name": "clipper", "rarity": 2, "size": (18, 25),
+    {"name": "clipper", "rarity": 2, "size": (18, 25), "color": "#8cbce0",
      "fw": _fw_angular, "hw": _hw_angular,
      "paint": _paint_clipper, "antenna": ANTENNA_CLUB,
      "spec": 0.10, "wing_alpha": 1.0, "body_scale": 1.0},
 
     # Ultra-rare (rarity 3)
-    {"name": "birdwing", "rarity": 3, "size": (24, 30),
+    {"name": "birdwing", "rarity": 3, "size": (24, 30), "color": "#28b848",
      "fw": _fw_broad, "hw": _hw_broad,
      "paint": _paint_birdwing, "antenna": ANTENNA_CLUB,
      "spec": 0.12, "wing_alpha": 1.0, "body_scale": 1.2},
 
-    {"name": "sunset_moth", "rarity": 3, "size": (18, 24),
+    {"name": "sunset_moth", "rarity": 3, "size": (18, 24), "color": "#d04830",
      "fw": _fw_swallowtail, "hw": lambda s: _hw_swallowtail(s, tail=0.6),
      "paint": _paint_sunset_moth, "antenna": ANTENNA_FEATHER,
      "spec": 0.20, "wing_alpha": 1.0, "body_scale": 1.15},
 
-    {"name": "eighty_eight", "rarity": 3, "size": (13, 18),
+    {"name": "eighty_eight", "rarity": 3, "size": (13, 18), "color": "#d82020",
      "fw": _fw_round, "hw": _hw_round,
      "paint": _paint_eighty_eight, "antenna": ANTENNA_CLUB,
      "spec": 0.08, "wing_alpha": 1.0, "body_scale": 0.8},
 
-    {"name": "luna", "rarity": 3, "size": (22, 28),
+    {"name": "luna", "rarity": 3, "size": (22, 28), "color": "#b9cd8b",
      "fw": _fw_moth, "hw": lambda s: _hw_moth(s, tail=0.8),
      "paint": _paint_luna, "antenna": ANTENNA_FEATHER,
      "spec": 0.08, "wing_alpha": 1.0, "body_scale": 1.2},
@@ -1188,7 +1210,24 @@ class Butterfly:
         self.vx = math.cos(self.heading) * self.speed
         self.vy = math.sin(self.heading) * self.speed
 
-    def update(self, mx, my):
+    def catch(self, target_x, target_y):
+        self.interaction = "caught"
+        self.interact_timer = 22
+        self._catch_x = target_x
+        self._catch_y = target_y
+        self._caught_done = False
+
+    def update(self, mx, my, net_active=False):
+        if self.interaction == "caught":
+            self.interact_timer -= 1
+            self.scale *= 0.87
+            self.x += (self._catch_x - self.x) * 0.25
+            self.y += (self._catch_y - self.y) * 0.25
+            self.wing_theta = 0.1
+            if self.interact_timer <= 0:
+                self._caught_done = True
+            return
+
         if self.retiring:
             self.phase += self.base_flap_speed
             self.wing_theta += (0.3 + 0.85 * math.sin(self.phase) - self.wing_theta) * 0.5
@@ -1292,16 +1331,18 @@ class Butterfly:
         dx = self.x - mx
         dy = self.y - my
         dist = math.hypot(dx, dy)
+        repel_r = NET_REPEL_RADIUS if net_active else MOUSE_REPEL_RADIUS
+        repel_s = NET_REPEL_STRENGTH if net_active else MOUSE_REPEL_STRENGTH
         if self.interaction != "startled":
-            if 1 < dist < MOUSE_REPEL_RADIUS:
-                push = (1 - dist / MOUSE_REPEL_RADIUS) * MOUSE_REPEL_STRENGTH
+            if 1 < dist < repel_r:
+                push = (1 - dist / repel_r) * repel_s
                 self.escape_x += dx / dist * push * 0.25
                 self.escape_y += dy / dist * push * 0.25
                 self.target_heading = math.atan2(dy, dx)
                 if self.state == "hover":
                     self.state = "go"
-        if dist < MOUSE_REPEL_RADIUS * 1.5:
-            self.nervous = min(1.0, self.nervous + 0.06)
+        if dist < repel_r * 1.5:
+            self.nervous = min(1.0, self.nervous + (0.12 if net_active else 0.06))
         else:
             self.nervous = max(0.0, self.nervous - 0.02)
         self.escape_x *= 0.93
@@ -1484,6 +1525,240 @@ def draw_butterfly(painter, b):
     painter.setOpacity(1.0)
 
 
+# ── Collection UI drawing ──────────────────────────────
+
+def draw_net_icon(painter, rect, active):
+    cx, cy = rect.center().x(), rect.center().y()
+    s = min(rect.width(), rect.height())
+
+    painter.setOpacity(0.25)
+    painter.setPen(Qt.NoPen)
+    painter.setBrush(QBrush(QColor(0, 0, 0, 40)))
+    painter.drawEllipse(QPointF(cx + 1, cy + 1), s * 0.46, s * 0.46)
+    painter.setOpacity(1.0)
+
+    if active:
+        glow = QRadialGradient(QPointF(cx, cy), s * 0.52)
+        glow.setColorAt(0.0, QColor(107, 142, 35, 90))
+        glow.setColorAt(0.7, QColor(107, 142, 35, 30))
+        glow.setColorAt(1.0, QColor(107, 142, 35, 0))
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(QBrush(glow))
+        painter.drawEllipse(QPointF(cx, cy), s * 0.52, s * 0.52)
+
+    hx = cx - s * 0.08
+    hy = cy - s * 0.12
+    rx, ry = s * 0.28, s * 0.24
+
+    hoop_c = QColor("#6B8E23") if active else QColor("#8B7355")
+    painter.setPen(QPen(hoop_c, 2.8, Qt.SolidLine, Qt.RoundCap))
+    painter.setBrush(Qt.NoBrush)
+    painter.drawEllipse(QPointF(hx, hy), rx, ry)
+
+    painter.setPen(QPen(QColor(180, 170, 150, 50), 0.5))
+    for i in range(-2, 3):
+        dy = i * ry * 0.4
+        half = (1.0 - (dy / ry) ** 2) ** 0.5 * rx if abs(dy) < ry else 0
+        if half > 1:
+            painter.drawLine(QPointF(hx - half, hy + dy),
+                             QPointF(hx + half, hy + dy))
+    for i in range(-2, 3):
+        dx = i * rx * 0.4
+        half = (1.0 - (dx / rx) ** 2) ** 0.5 * ry if abs(dx) < rx else 0
+        if half > 1:
+            painter.drawLine(QPointF(hx + dx, hy - half),
+                             QPointF(hx + dx, hy + half))
+
+    handle_g = QLinearGradient(
+        QPointF(cx + s * 0.12, cy + s * 0.04),
+        QPointF(cx + s * 0.32, cy + s * 0.38))
+    handle_g.setColorAt(0.0, QColor("#8B6914"))
+    handle_g.setColorAt(0.5, QColor("#A0824A"))
+    handle_g.setColorAt(1.0, QColor("#6B4226"))
+    painter.setPen(QPen(QBrush(handle_g), 3.5, Qt.SolidLine, Qt.RoundCap))
+    painter.drawLine(QPointF(cx + s * 0.12, cy + s * 0.06),
+                     QPointF(cx + s * 0.32, cy + s * 0.38))
+
+
+def draw_badge(painter, rect, caught_count):
+    text = f"{caught_count}/16"
+    painter.setFont(QFont("Sans", 10, QFont.Bold))
+    painter.setPen(QColor(255, 255, 255, 180))
+    painter.drawText(rect.adjusted(1, 1, 1, 1), Qt.AlignCenter, text)
+    painter.setPen(QColor("#3A4A1A"))
+    painter.drawText(rect, Qt.AlignCenter, text)
+
+
+def draw_net_cursor(painter, x, y):
+    painter.setOpacity(0.9)
+    painter.setPen(QPen(QColor("#6B4226"), 3, Qt.SolidLine, Qt.RoundCap))
+    painter.setBrush(Qt.NoBrush)
+    painter.drawLine(QPointF(x + 10, y + 10), QPointF(x + 28, y + 28))
+    painter.setPen(QPen(QColor("#8B7D6B"), 2.5))
+    painter.setBrush(QBrush(QColor(255, 255, 255, 50)))
+    painter.drawEllipse(QPointF(x - 2, y - 2), 18, 15)
+    painter.setPen(QPen(QColor(160, 150, 130, 80), 0.7))
+    for i in range(-2, 3):
+        painter.drawLine(QPointF(x - 20, y - 2 + i * 6),
+                         QPointF(x + 16, y - 2 + i * 6))
+    painter.setOpacity(1.0)
+
+
+_SPECIMEN_CACHE = {}
+
+
+def _render_specimen(sp, size):
+    fw = sp["fw"](1.0)
+    hw = sp["hw"](1.0)
+    bounds = fw.boundingRect().united(hw.boundingRect())
+    max_span = max(bounds.right(), 0.5) * 2
+    target = size * 0.65
+    sc = min(target / max_span, target / bounds.height())
+
+    w = int(size) + 4
+    h = int(size) + 4
+    cx, cy = w / 2, h / 2
+    mid_y = (bounds.top() + bounds.bottom()) * 0.5 * sc
+
+    img = QImage(w, h, QImage.Format_ARGB32_Premultiplied)
+    img.fill(Qt.transparent)
+    p = QPainter(img)
+    p.setRenderHint(QPainter.Antialiasing)
+
+    for side in (1, -1):
+        p.save()
+        p.translate(cx, cy - mid_y)
+        p.scale(side * sc, sc)
+        sp["paint"](p, fw, 1.0, False)
+        sp["paint"](p, hw, 1.0, True)
+        p.restore()
+
+    body_c = QColor(40, 30, 15)
+    body_t = cy - mid_y + bounds.top() * sc * 0.5
+    body_b = cy - mid_y + bounds.bottom() * sc * 0.45
+    p.setPen(QPen(body_c, max(1.2, sc * 0.1), Qt.SolidLine, Qt.RoundCap))
+    p.drawLine(QPointF(cx, body_t), QPointF(cx, body_b))
+
+    ant = abs(bounds.top()) * sc * 0.28
+    p.setPen(QPen(body_c, 0.7, Qt.SolidLine, Qt.RoundCap))
+    for sx in (-1, 1):
+        ap = QPainterPath()
+        ap.moveTo(cx, body_t)
+        ap.quadTo(cx + sx * ant * 0.5, body_t - ant * 0.6,
+                  cx + sx * ant * 0.45, body_t - ant)
+        p.drawPath(ap)
+
+    p.setPen(Qt.NoPen)
+    p.setBrush(QBrush(QColor(175, 172, 164)))
+    p.drawEllipse(QPointF(cx, cy - mid_y), 1.2, 1.2)
+    p.end()
+    return img
+
+
+def _get_specimen(sp, size):
+    key = (sp["name"], int(size))
+    if key not in _SPECIMEN_CACHE:
+        _SPECIMEN_CACHE[key] = _render_specimen(sp, size)
+    return _SPECIMEN_CACHE[key]
+
+
+def draw_specimen(painter, cx, cy, sp, cell_w, found):
+    if found:
+        img = _get_specimen(sp, cell_w)
+        w_alpha = sp.get("wing_alpha", 1.0)
+        painter.setOpacity(w_alpha)
+        iw, ih = img.width(), img.height()
+        painter.drawImage(QRectF(cx - iw / 2, cy - ih / 2, iw, ih), img)
+        painter.setOpacity(1.0)
+    else:
+        fw = sp["fw"](1.0)
+        hw = sp["hw"](1.0)
+        bounds = fw.boundingRect().united(hw.boundingRect())
+        max_span = max(bounds.right(), 0.5) * 2
+        target = cell_w * 0.65
+        sc = min(target / max_span, target / bounds.height())
+        mid_y = (bounds.top() + bounds.bottom()) * 0.5 * sc
+
+        painter.setOpacity(0.2)
+        for side in (1, -1):
+            painter.save()
+            painter.translate(cx, cy - mid_y)
+            painter.scale(side * sc, sc)
+            painter.setPen(QPen(QColor(198, 194, 184), 0.06))
+            painter.setBrush(QBrush(QColor(218, 214, 204)))
+            painter.drawPath(fw)
+            painter.drawPath(hw)
+            painter.restore()
+
+        body_c = QColor(198, 194, 184)
+        body_t = cy - mid_y + bounds.top() * sc * 0.5
+        body_b = cy - mid_y + bounds.bottom() * sc * 0.45
+        painter.setPen(QPen(body_c, max(1.0, sc * 0.08), Qt.SolidLine, Qt.RoundCap))
+        painter.drawLine(QPointF(cx, body_t), QPointF(cx, body_b))
+        painter.setOpacity(1.0)
+
+
+def draw_collection_panel(painter, rect, collection, species_list):
+    pw, ph = rect.width(), rect.height()
+    px, py = rect.x(), rect.y()
+    caught_count = len([s for s in species_list
+                        if collection.get(s["name"], 0) > 0])
+
+    painter.setPen(QPen(QColor(130, 95, 55), 3))
+    painter.setBrush(QBrush(QColor(165, 125, 80)))
+    painter.drawRoundedRect(rect.adjusted(-2, -2, 2, 2), 10, 10)
+
+    inner = rect.adjusted(4, 4, -4, -4)
+    painter.setPen(Qt.NoPen)
+    painter.setBrush(QBrush(QColor(250, 246, 236)))
+    painter.drawRoundedRect(inner, 6, 6)
+
+    painter.setPen(QColor("#4A3520"))
+    painter.setFont(QFont("Sans", 12, QFont.Bold))
+    painter.drawText(QRectF(px, py + 10, pw, 24), Qt.AlignCenter,
+                     f"Collection  {caught_count}/16")
+
+    painter.setPen(QPen(QColor(210, 198, 178), 0.5))
+    painter.drawLine(QPointF(px + 18, py + 38),
+                     QPointF(px + pw - 18, py + 38))
+
+    cols, rows = 4, 4
+    cell_w = (pw - 16) / cols
+    cell_h = (ph - 52) / rows
+    gx = px + 8
+    gy = py + 44
+
+    for i, sp in enumerate(species_list):
+        col = i % cols
+        row = i // cols
+        cell_x = gx + col * cell_w
+        cell_y = gy + row * cell_h
+        cx = cell_x + cell_w / 2
+        spec_cy = cell_y + cell_h * 0.38
+
+        name = sp["name"]
+        count = collection.get(name, 0)
+        found = count > 0
+
+        draw_specimen(painter, cx, spec_cy, sp, cell_w, found)
+
+        label_y = cell_y + cell_h * 0.72
+        if found:
+            painter.setPen(QColor("#3A2A1A"))
+            label = name.replace("_", " ").title()
+        else:
+            painter.setPen(QColor(188, 182, 168))
+            label = "???"
+        painter.setFont(QFont("Sans", 7))
+        painter.drawText(QRectF(cell_x, label_y, cell_w, 13),
+                         Qt.AlignCenter, label)
+        if found:
+            painter.setPen(QColor("#6B8E23"))
+            painter.setFont(QFont("Sans", 7))
+            painter.drawText(QRectF(cell_x, label_y + 11, cell_w, 13),
+                             Qt.AlignCenter, f"×{count}")
+
+
 # ── Overlay window ──────────────────────────────────────
 
 class ButterflyOverlay(QWidget):
@@ -1512,6 +1787,15 @@ class ButterflyOverlay(QWidget):
         self._drag_prev = (0.0, 0.0)
         self._initial_fill_done = False
         self._hidden = False
+
+        self._collection = load_collection()
+        self._net_active = False
+        self._panel_open = False
+        avail = QApplication.primaryScreen().availableGeometry()
+        aw, ah = avail.width(), avail.height()
+        self._badge_rect = QRectF(aw - 68, ah - 50, 52, 30)
+        self._net_icon_rect = QRectF(aw - 120, ah - 56, 48, 48)
+        self._panel_rect = QRectF(aw - 370, ah - 490, 350, 430)
 
         self.start_time = time.monotonic()
         self.physics_steps = 0
@@ -1653,14 +1937,32 @@ class ButterflyOverlay(QWidget):
             return
         if self._dragging:
             return
+        if self._net_active:
+            try:
+                self._x11_window.shape_rectangles(
+                    self._x11_shape.SO.Set, self._x11_shape.SK.Input,
+                    self._x11_X.Unsorted, 0, 0,
+                    [(0, 0, self.sw, self.sh)],
+                )
+                self.xdisplay.flush()
+            except Exception:
+                pass
+            return
         pad = 10
         rects = []
         for b in self.butterflies:
+            if b.interaction == "caught":
+                continue
             x1, y1, x2, y2 = b.bbox
             rects.append((
                 max(0, int(x1) - pad), max(0, int(y1) - pad),
                 int(x2 - x1) + 2 * pad, int(y2 - y1) + 2 * pad,
             ))
+        for r in (self._net_icon_rect, self._badge_rect):
+            rects.append((int(r.x()), int(r.y()), int(r.width()), int(r.height())))
+        if self._panel_open:
+            r = self._panel_rect
+            rects.append((int(r.x()), int(r.y()), int(r.width()), int(r.height())))
         try:
             self._x11_window.shape_rectangles(
                 self._x11_shape.SO.Set, self._x11_shape.SK.Input,
@@ -1677,27 +1979,59 @@ class ButterflyOverlay(QWidget):
                 return b
         return None
 
+    def _catch_butterfly(self, b):
+        b.catch(self.mouse_x, self.mouse_y)
+        name = b.species["name"]
+        self._collection[name] = self._collection.get(name, 0) + 1
+        save_collection(self._collection)
+
     def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            x, y = event.x(), event.y()
+        if event.button() == Qt.RightButton and self._net_active:
+            self._net_active = False
+            return
+        if event.button() != Qt.LeftButton:
+            return
+        x, y = event.x(), event.y()
+
+        if self._net_icon_rect.contains(QPointF(x, y)):
+            self._net_active = not self._net_active
+            if self._net_active:
+                self._panel_open = False
+            return
+        if self._badge_rect.contains(QPointF(x, y)):
+            self._panel_open = not self._panel_open
+            if self._panel_open:
+                self._net_active = False
+            return
+        if self._panel_open:
+            if not self._panel_rect.contains(QPointF(x, y)):
+                self._panel_open = False
+            return
+
+        if self._net_active:
             b = self._hit_butterfly(x, y)
-            if b:
-                if b.interaction == "held":
-                    return
-                b.hold(x, y)
-                self._dragging = b
-                self._drag_prev = (x, y)
-                self.grabMouse()
-                if hasattr(self, '_x11_window'):
-                    try:
-                        self._x11_window.shape_rectangles(
-                            self._x11_shape.SO.Set, self._x11_shape.SK.Input,
-                            self._x11_X.Unsorted, 0, 0,
-                            [(0, 0, self.sw, self.sh)],
-                        )
-                        self.xdisplay.flush()
-                    except Exception:
-                        pass
+            if b and b.interaction != "caught":
+                self._catch_butterfly(b)
+            return
+
+        b = self._hit_butterfly(x, y)
+        if b:
+            if b.interaction == "held":
+                return
+            b.hold(x, y)
+            self._dragging = b
+            self._drag_prev = (x, y)
+            self.grabMouse()
+            if hasattr(self, '_x11_window'):
+                try:
+                    self._x11_window.shape_rectangles(
+                        self._x11_shape.SO.Set, self._x11_shape.SK.Input,
+                        self._x11_X.Unsorted, 0, 0,
+                        [(0, 0, self.sw, self.sh)],
+                    )
+                    self.xdisplay.flush()
+                except Exception:
+                    pass
 
     def mouseMoveEvent(self, event):
         x, y = event.x(), event.y()
@@ -1716,10 +2050,10 @@ class ButterflyOverlay(QWidget):
             self._dragging = None
             self.releaseMouse()
             return
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.LeftButton and not self._net_active:
             x, y = event.x(), event.y()
             b = self._hit_butterfly(x, y)
-            if b and b.interaction != "held":
+            if b and b.interaction not in ("held", "caught"):
                 b.startle(x, y)
 
     def _tick(self):
@@ -1730,10 +2064,11 @@ class ButterflyOverlay(QWidget):
         margin = 120
         self.butterflies = [
             b for b in self.butterflies
-            if (not b.retiring
-                or (-margin < b.x < self.sw + margin
-                    and -margin < b.y < self.sh + margin))
-            or b is self._dragging
+            if not getattr(b, '_caught_done', False)
+            and ((not b.retiring
+                  or (-margin < b.x < self.sw + margin
+                      and -margin < b.y < self.sh + margin))
+                 or b is self._dragging)
         ]
 
         elapsed = time.monotonic() - self.start_time
@@ -1741,7 +2076,7 @@ class ButterflyOverlay(QWidget):
         self.physics_steps += steps
         for _ in range(steps):
             for b in self.butterflies:
-                b.update(self.mouse_x, self.mouse_y)
+                b.update(self.mouse_x, self.mouse_y, self._net_active)
 
         self.update()
         self._update_input_region()
@@ -1753,6 +2088,18 @@ class ButterflyOverlay(QWidget):
 
         for b in self.butterflies:
             draw_butterfly(painter, b)
+
+        caught_count = len([s for s in SPECIES
+                           if self._collection.get(s["name"], 0) > 0])
+        draw_net_icon(painter, self._net_icon_rect, self._net_active)
+        draw_badge(painter, self._badge_rect, caught_count)
+
+        if self._panel_open:
+            draw_collection_panel(painter, self._panel_rect,
+                                  self._collection, SPECIES)
+
+        if self._net_active:
+            draw_net_cursor(painter, self.mouse_x, self.mouse_y)
 
         painter.end()
 
