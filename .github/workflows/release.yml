@@ -32,6 +32,7 @@ jobs:
           pyinstaller --onefile --noconsole \
             --name Papillon-Linux \
             --hidden-import PyQt5.sip \
+            --hidden-import papillon_engine \
             papillon.py
 
       - name: Upload to release
@@ -58,6 +59,7 @@ jobs:
           pyinstaller --onefile --noconsole `
             --name Papillon-Windows `
             --hidden-import PyQt5.sip `
+            --hidden-import papillon_engine `
             papillon_win.py
 
       - name: Upload to release
@@ -84,6 +86,7 @@ jobs:
           pyinstaller --onefile --noconsole \
             --name Papillon-macOS \
             --hidden-import PyQt5.sip \
+            --hidden-import papillon_engine \
             papillon_mac.py
 
       - name: Upload to release
